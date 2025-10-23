@@ -19,6 +19,7 @@
   "homepage": "https://github.com/amul69906995/mine-legislation#readme",
   "dependencies": {
     "@pinecone-database/pinecone": "^6.1.2",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "pdf-parse": "^2.4.5"
   }
 }

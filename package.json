@@ -1,0 +1,24 @@
+{
+  "name": "minelegislation",
+  "version": "1.0.0",
+  "description": "![Demo](./demo/minelegislation_bot.mp4)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amul69906995/mine-legislation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amul69906995/mine-legislation/issues"
+  },
+  "homepage": "https://github.com/amul69906995/mine-legislation#readme",
+  "dependencies": {
+    "@pinecone-database/pinecone": "^6.1.2",
+    "dotenv": "^17.2.3"
+  }
+}

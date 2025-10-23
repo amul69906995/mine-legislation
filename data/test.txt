@@ -1,0 +1,13 @@
+contains test/training data
+
+//coal mine related regulation
+data\india\coal_bearing_area_acquisition_and_development_1957.pdf
+data\india\coal_mines_labour_welfare.pdf
+data\india\coal_mines_nationalisation_1973.pdf
+data\india\coal_mines_provident_fund.pdf
+data\india\coal_mines_regulation_2017.pdf
+data\india\coal_mines_special_provisions_act_2015.pdf
+data\india\indian_mines_act_1952.pdf
+data\india\mines_minerals_development_regulation_1957.pdf
+data\india\mines_rescue_rules_1985.pdf
+data\india\mines_rules_1955.pdf

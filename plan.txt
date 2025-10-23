@@ -1,0 +1,11 @@
+//how we plan to go
+//overall
+first we create embeddings 
+save to db 
+then backend will talk to frontend(based on selected model aman_adity(trained)/amul(rag_based)) 
+as well as country selection we will run amul_rag_pipline or aman_adity's model
+
+
+//rag_based
+  collect data 
+  

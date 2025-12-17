@@ -1,0 +1,7 @@
+langgraph
+langchain
+pandas
+numpy
+langchain_groq
+dotenv
+typing

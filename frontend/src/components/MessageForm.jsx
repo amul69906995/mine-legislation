@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './styles.css'; // Assuming you have a CSS file for styles
-function MessageForm({ onSend }) {
+function MessageForm({ onSend,replyWait }) {
   const [text, setText] = useState('');
 
   const handleSubmit = (e) => {
@@ -17,7 +17,7 @@ function MessageForm({ onSend }) {
         onChange={(e) => setText(e.target.value)}
         placeholder="Type your message..."
       />
-      <button type="submit">Send</button>
+      <button type="submit" disabled={replyWait}>{replyWait?"waiting for reply...":"Send"}</button>
     </form>
   );
 }

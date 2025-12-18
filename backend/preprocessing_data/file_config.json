@@ -1,7 +1,7 @@
 [
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/coal_mines_regulation_2017.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/coal_mines_regulation_2017.pdf",
+        "country": "india",
         "doc_hint": "Coal Mines Regulation 2017",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -9,8 +9,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/coal_bearing_area_acquisition_and_development_1957.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/coal_bearing_area_acquisition_and_development_1957.pdf",
+        "country": "india",
         "doc_hint": "Coal Bearing Areas Acquisition and Development Act 1957",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -18,8 +18,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/coal_mines_labour_welfare.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/coal_mines_labour_welfare.pdf",
+        "country": "india",
         "doc_hint": "Coal Mines Labour Welfare",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -27,8 +27,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/coal_mines_nationalisation_1973.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/coal_mines_nationalisation_1973.pdf",
+        "country": "india",
         "doc_hint": "Coal Mines Nationalisation Act 1973",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -36,8 +36,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/coal_mines_provident_fund.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/coal_mines_provident_fund.pdf",
+        "country": "india",
         "doc_hint": "Coal Mines Provident Fund",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -45,8 +45,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/coal_mines_special_provisions_act_2015.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/coal_mines_special_provisions_act_2015.pdf",
+        "country": "india",
         "doc_hint": "Coal Mines Special Provisions Act 2015",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -54,8 +54,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/indian_mines_act_1952.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/indian_mines_act_1952.pdf",
+        "country": "india",
         "doc_hint": "Indian Mines Act 1952",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -63,8 +63,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/mines_minerals_development_regulation_1957.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/mines_minerals_development_regulation_1957.pdf",
+        "country": "india",
         "doc_hint": "Mines and Minerals (Development and Regulation) Act 1957",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -72,8 +72,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/mines_rescue_rules_1985.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/mines_rescue_rules_1985.pdf",
+        "country": "india",
         "doc_hint": "Mines Rescue Rules 1985",
         "jurisdiction_level": "national",
         "applicable_states": [],
@@ -81,8 +81,8 @@
         "short_summery": ""
     },
     {
-        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/data/india/mines_rules_1955.pdf",
-        "country": "IN",
+        "path": "C:/Users/amul7/OneDrive - Indian Institute of Technology (BHU), Varanasi/Desktop/minelegislation/backend/data/india/mines_rules_1955.pdf",
+        "country": "india",
         "doc_hint": "Mines Rules 1955",
         "jurisdiction_level": "national",
         "applicable_states": [],

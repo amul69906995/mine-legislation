@@ -3,46 +3,46 @@ const { v4: uuidv4 } = require('uuid');
 const { PDFParse } = require('pdf-parse');
 
 // CONFIG
-const TARGET_CHARS = 5000;
-const OVERLAP_CHARS = Math.floor(TARGET_CHARS * 0.1);
+const TARGET_CHARS = 1500;
+const OVERLAP_CHARS = Math.floor(TARGET_CHARS * 0.15);
 
 // helpers
 function detectHeadersFooters(pageTexts) {
-    const lineCounts = new Map();
-    pageTexts.forEach(p => {
-        const lines = p.split(/\r?\n/).slice(0, 4).concat(p.split(/\r?\n/).slice(-4)); // check top and bottom
-        lines.forEach(l => {
-            const s = l.trim();
-            if (!s) return;
-            lineCounts.set(s, (lineCounts.get(s) || 0) + 1);
-        });
+  const lineCounts = new Map();
+  pageTexts.forEach(p => {
+    const lines = p.split(/\r?\n/).slice(0, 4).concat(p.split(/\r?\n/).slice(-4)); // check top and bottom
+    lines.forEach(l => {
+      const s = l.trim();
+      if (!s) return;
+      lineCounts.set(s, (lineCounts.get(s) || 0) + 1);
     });
-    const threshold = Math.max(3, Math.floor(pageTexts.length * 0.6));
-    const repeated = new Set();
-    for (const [line, count] of lineCounts) if (count >= threshold) repeated.add(line);
-    return repeated;
+  });
+  const threshold = Math.max(3, Math.floor(pageTexts.length * 0.6));
+  const repeated = new Set();
+  for (const [line, count] of lineCounts) if (count >= threshold) repeated.add(line);
+  return repeated;
 }
 
 function stripHeadersFooters(pageTexts, repeatedSet) {
-    return pageTexts.map(p => p.split(/\r?\n/).filter(l => !repeatedSet.has(l.trim())).join('\n'));
+  return pageTexts.map(p => p.split(/\r?\n/).filter(l => !repeatedSet.has(l.trim())).join('\n'));
 }
 
 function findSectionBoundaries(fullText) {
-    // returns array of {index, title}
-    const lines = fullText.split(/\r?\n/);
-    const boundaries = [];
-    let cumulative = 0;
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        // patterns used for these legal files
-        if (/^CHAPTER\b/i.test(line) || /^\d{1,4}\.\s+[A-Z]/.test(line) || /^(Section|Regulation|Rule)\b/i.test(line)) {
-            boundaries.push({ pos: cumulative, title: line });
-        }
-        cumulative += lines[i].length + 1; // + newline
+  // returns array of {index, title}
+  const lines = fullText.split(/\r?\n/);
+  const boundaries = [];
+  let cumulative = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    // patterns used for these legal files
+    if (/^CHAPTER\b/i.test(line) || /^\d{1,4}\.\s+[A-Z]/.test(line) || /^(Section|Regulation|Rule)\b/i.test(line)) {
+      boundaries.push({ pos: cumulative, title: line });
     }
-    // ensure start boundary
-    if (boundaries.length === 0) boundaries.push({ pos: 0, title: 'start' });
-    return boundaries;
+    cumulative += lines[i].length + 1; // + newline
+  }
+  // ensure start boundary
+  if (boundaries.length === 0) boundaries.push({ pos: 0, title: 'start' });
+  return boundaries;
 }
 
 // async function chunkBySections(fullText, boundaries, fileInfo, path) {
@@ -113,7 +113,7 @@ async function chunkBySections(fullText, boundaries, fileInfo, sourcePath) {
   // small helper to remove obvious page-number footers like "-- 2 of 121 --" or "Page 2 of 121"
   function removeCommonPageFootersLine(line) {
     return line.replace(/^\s*[-–—]{0,2}\s*\d+\s*(of|\/)\s*\d+\s*[-–—]{0,2}\s*$/i, '')
-               .replace(/^\s*Page\s+\d+\s*(of|\/)\s*\d+\s*$/i, '');
+      .replace(/^\s*Page\s+\d+\s*(of|\/)\s*\d+\s*$/i, '');
   }
 
   // optional dedupe (useful while debugging to stop identical inserts)
@@ -136,6 +136,7 @@ async function chunkBySections(fullText, boundaries, fileInfo, sourcePath) {
         file_name: sourcePath.split(/[\\/]/).pop(),
         doc_hint: fileInfo.doc_hint,
         source_path: sourcePath,
+        country: fileInfo.country,
         jurisdiction_level: fileInfo.jurisdiction_level || null,
         mineral_scope: fileInfo.mineral_scope || fileInfo.mineral_type || null,
         section_title: title,
@@ -211,6 +212,7 @@ async function chunkBySections(fullText, boundaries, fileInfo, sourcePath) {
         file_name: sourcePath.split(/[\\/]/).pop(),
         doc_hint: fileInfo.doc_hint,
         source_path: sourcePath,
+        country: fileInfo.country,
         jurisdiction_level: fileInfo.jurisdiction_level || null,
         mineral_scope: fileInfo.mineral_scope || fileInfo.mineral_type || null,
         section_title: title + ' (sub)',
@@ -253,38 +255,37 @@ async function chunkBySections(fullText, boundaries, fileInfo, sourcePath) {
       } else {
         cursor = nextCursor;
       }
-    } 
-  } 
+    }
+  }
 }
 
 
 async function extractPdfPagesToText(path) {
-    const parser = new PDFParse({ url: path });
-    const parsed = await parser.getText();
-    // pdf-parse gives text for all pages combined; if you need per-page, use a parser that supports pages or split heuristically
-    // For now: naive split by form feed \f (pdf-parse uses it)
-    const pages = parsed.text.split('\f').map(p => p.trim()).filter(Boolean);
-    return pages;
+  const parser = new PDFParse({ url: path });
+  const parsed = await parser.getText();
+  // pdf-parse gives text for all pages combined; if you need per-page, use a parser that supports pages or split heuristically
+  // For now: naive split by form feed \f (pdf-parse uses it)
+  const pages = parsed.text.split('\f').map(p => p.trim()).filter(Boolean);
+  return pages;
 }
 
 // main exported function
 const processAFile = async (fileInfo) => {
-    console.log("processing file .......", fileInfo.doc_hint);
-
-    const path = fileInfo.path;
-    const pages = await extractPdfPagesToText(path);
-    //console.log(pages)
-    const repeated = detectHeadersFooters(pages);
-    //console.log("repeated....",repeated)
-    const cleanedPages = stripHeadersFooters(pages, repeated);
-    //console.log("cleaned pages .........",cleanedPages)
-    const fullText = cleanedPages.join('\n\n');
-    //console.log("full text......", fullText)
-    // find section boundaries
-    const boundaries = findSectionBoundaries(fullText);
-    //console.log("boundries.........",boundaries)
-    // chunk
-    await chunkBySections(fullText, boundaries, fileInfo, path);
-    console.log("all file processed......")
+  console.log("processing file .......", fileInfo.doc_hint);
+  const path = fileInfo.path;
+  const pages = await extractPdfPagesToText(path);
+  console.log(pages)
+  const repeated = detectHeadersFooters(pages);
+  //console.log("repeated....",repeated)
+  const cleanedPages = stripHeadersFooters(pages, repeated);
+  //console.log("cleaned pages .........",cleanedPages)
+  const fullText = cleanedPages.join('\n\n');
+  //console.log("full text......", fullText)
+  // find section boundaries
+  const boundaries = findSectionBoundaries(fullText);
+  //console.log("boundries.........",boundaries)
+  // chunk
+  await chunkBySections(fullText, boundaries, fileInfo, path);
+  console.log("all file processed......")
 };
 module.exports = { processAFile }

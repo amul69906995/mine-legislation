@@ -18,10 +18,14 @@
   },
   "homepage": "https://github.com/amul69906995/mine-legislation#readme",
   "dependencies": {
+    "@google/genai": "^1.33.0",
     "@pinecone-database/pinecone": "^6.1.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "mongodb": "^7.0.0",
     "pdf-parse": "^2.4.5",
+    "update": "^0.7.4",
     "uuid": "^13.0.0"
   }
 }

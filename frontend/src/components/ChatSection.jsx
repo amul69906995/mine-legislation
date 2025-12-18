@@ -1,7 +1,6 @@
-import React from 'react';
 import MessageForm from './MessageForm';
 import './styles.css';
-function ChatSection({ messages, onSend }) {
+function ChatSection({ messages, onSend,replyWait }) {
   return (
     <div className="chat-section">
       <div className="messages">
@@ -11,7 +10,7 @@ function ChatSection({ messages, onSend }) {
           </div>
         ))}
       </div>
-      <MessageForm onSend={onSend} />
+      <MessageForm onSend={onSend} replyWait={replyWait}/>
     </div>
   );
 }

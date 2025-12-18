@@ -1,6 +1,6 @@
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017';
 const MONGO_DB = process.env.MONGO_DB || 'minelegislation';
-const MONGO_COLLECTION = process.env.MONGO_COLLECTION || 'chunks';
+const MONGO_COLLECTION = process.env.MONGO_COLLECTION || 'india';
 const { MongoClient } = require('mongodb');
 
 const client = new MongoClient(MONGO_URI);

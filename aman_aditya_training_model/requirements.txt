@@ -5,3 +5,7 @@ numpy
 langchain_groq
 dotenv
 typing
+openai
+docling
+transformers
+pinecone

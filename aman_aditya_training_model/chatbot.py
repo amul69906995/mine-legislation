@@ -9,11 +9,13 @@ graph_builder= StateGraph(State)
 
 from langchain_groq import ChatGroq
 import os
+from openai import OpenAI
 
 # from groq import Groq
 from dotenv import load_dotenv
 load_dotenv()
 llm= ChatGroq(model="groq/compound", api_key=os.getenv('API_KEY'))
+# llm= ChatGroq(model="openai/gpt-oss-20b", api_key=os.getenv('API_KEY'))
 def chatbot(state: State): 
     return {"messages": [llm.invoke(state["messages"])]}  
 

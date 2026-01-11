@@ -37,7 +37,7 @@ import time
 # print(cos_sim(embeddings[0], embeddings[1]))
 
 records=[]
-file="/Users/amanaditya/Documents/thesis/chunk_data"
+file="/Users/amanaditya/Documents/thesis/mine-legislation/aman_aditya_training_model/vd_fill.py"
 for filename in os.listdir(file):
     if filename.endswith("_chunks.json"):
         with open(os.path.join(file,filename),"r",encoding="utf-8") as f:
@@ -100,8 +100,7 @@ results = index.search(
         "inputs": {
             "text": "What is the appointed date under the Mines Act?",
         },
-    },
-    # include_metadata=True
+    }
 )
 print("Search results:",results)
 

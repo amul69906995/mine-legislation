@@ -1,0 +1,88 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# =========================
+# Virtual Environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+*.env
+
+# =========================
+# FastAPI / Uvicorn
+# =========================
+*.log
+uvicorn.log
+
+# =========================
+# Jupyter / Notebooks
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# =========================
+# ML / RAG / Vector DB
+# =========================
+data/
+datasets/
+vectorstore/
+faiss_index/
+chroma/
+qdrant/
+milvus/
+weaviate/
+*.bin
+*.pt
+*.ckpt
+
+# =========================
+# Model / Cache
+# =========================
+.cache/
+.huggingface/
+transformers_cache/
+torch_cache/
+
+# =========================
+# Test / Coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Build / Distribution
+# =========================
+build/
+dist/
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
+*.tmp

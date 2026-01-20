@@ -73,6 +73,8 @@ function Sidebar({
           onChange={(e) => setSelectedModel(e.target.value)}
         >
           <option value="rag">Rag</option>
+          <option value="ragadv">RagAdv</option>
+
           <option value="trained">Trained</option>
         </select>
       </div>

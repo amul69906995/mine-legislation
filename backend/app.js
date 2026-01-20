@@ -74,6 +74,23 @@ app.post('/chat', async (req, res, next) => {
             },
         });
     }
+    else if (model === "ragadv") {
+        // chat.js
+        const response = await fetch("http://localhost:8000/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                query
+            }),
+        });
+
+        const { answer } = await response.json();
+        console.log(answer);
+
+        res.json({ message: answer })
+    }
     else if (model === "trained") {
         console.log("here we will invoke trained model with user query and country")
         res.json({ message: "here we will invoke trained model with user query and country" })

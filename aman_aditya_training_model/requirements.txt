@@ -9,3 +9,6 @@ openai
 docling
 transformers
 pinecone
+pydantic
+fastapi
+uvicorn

@@ -39,6 +39,11 @@ def retrieve(state:State):
             "inputs": {
                 "text": Query,
             },
+        },
+        rerank={
+            "model": "bge-reranker-v2-m3",
+            "top_n": 10,
+            "rank_fields": ["chunk_text"]
         }
     )
     # print(2)
@@ -48,6 +53,7 @@ def retrieve(state:State):
     docs=[]
     
     for hit in results['result']['hits']:
+        print(hit["_score"])
         docs.append({"source":hit["fields"]["source"],
             "heading": hit['fields']['heading'],
             "chunk_text": hit['fields']['chunk_text']})

@@ -1,0 +1,16 @@
+langgraph
+langchain
+pandas
+numpy
+langchain_groq
+dotenv
+typing
+openai
+# docling
+transformers
+pinecone
+pydantic
+fastapi
+uvicorn
+pdf2image
+pytesseract

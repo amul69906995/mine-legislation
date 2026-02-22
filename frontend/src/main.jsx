@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import RagSource from './components/RagSource.jsx';
 import Methodlogy from './components/Methodlogy.jsx';
+import Upload from './components/Upload.jsx';
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,10 @@ const router = createBrowserRouter([
     path:'/methodlogy',
     element:<Methodlogy/>
   },
-
+ {
+    path:'/upload-to-knowledge-base',
+    element:<Upload/>
+  },
 ]);
 createRoot(document.getElementById('root')).render(
   <StrictMode>

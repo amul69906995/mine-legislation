@@ -7,48 +7,45 @@ function Sidebar({
   selectedModel,
   setSelectedModel,
 }) {
+
+  const buttonStyle = {
+    width: "100%",
+    padding: "10px 14px",
+    marginBottom: "10px",
+    backgroundColor: "#455a64",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+  };
+
   return (
     <div className="sidebar">
       <h2>Chats</h2>
 
       <Link to="/rag-source">
-        <button
-          style={{
-            width: "100%",
-            padding: "10px 14px",
-            marginBottom: "10px",
-            backgroundColor: "#1976d2",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "500",
-          }}
-        >
+        <button style={{ ...buttonStyle, backgroundColor: "#1976d2" }}>
           Rag Source
         </button>
       </Link>
 
       <Link to="/methodlogy">
-        <button
-          style={{
-            width: "100%",
-            padding: "10px 14px",
-            backgroundColor: "#455a64",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "500",
-          }}
-        >
+        <button style={buttonStyle}>
           Methodology
         </button>
       </Link>
+
+      <Link to="/upload-to-knowledge-base">
+        <button style={buttonStyle}>
+          Knowledge Base
+        </button>
+      </Link>
+
       <br />
       <br />
+
       <div className="country-selector">
         <label>Select Country:</label>
         <select
@@ -74,7 +71,6 @@ function Sidebar({
         >
           <option value="rag">Rag</option>
           <option value="ragadv">RagAdv</option>
-
           <option value="trained">Trained</option>
         </select>
       </div>

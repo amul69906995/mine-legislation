@@ -1,0 +1,128 @@
+/* Page background */
+.page-container {
+  min-height: 100vh;
+  background: #f4f6f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Upload Card */
+.upload-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 600px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  margin-bottom: 40px;
+}
+
+.upload-card h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Info box */
+.info-box {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.info-box ul {
+  margin-top: 8px;
+  padding-left: 18px;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-group select,
+.form-group input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Selected file */
+.selected-file {
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn.primary {
+  background: #1976d2;
+  color: white;
+}
+
+.btn.primary:hover {
+  background: #125ea6;
+}
+
+.btn.secondary {
+  background: #455a64;
+  color: white;
+}
+
+.btn.secondary:disabled {
+  background: #9e9e9e;
+  cursor: not-allowed;
+}
+
+/* Messages */
+.error-msg {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-msg {
+  color: green;
+  margin-top: 10px;
+}
+
+/* Uploaded documents section */
+.documents-section {
+  width: 100%;
+  max-width: 900px;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.documents-section h2 {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}

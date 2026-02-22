@@ -24,6 +24,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "mongodb": "^7.0.0",
+    "mongoose": "^9.2.1",
+    "multer": "^2.0.2",
     "pdf-parse": "^2.4.5",
     "update": "^0.7.4",
     "uuid": "^13.0.0"

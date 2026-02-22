@@ -18,12 +18,12 @@ def retrieve(state: State):
     results = index.search(
         namespace="coal-legislation",
         query={
-            "top_k": 5,
+            "top_k": 3,
             "inputs": {"text": query},
         },
         rerank={
             "model": "bge-reranker-v2-m3",
-            "top_n": 5,
+            "top_n": 3,
             "rank_fields": ["chunk_text"],
         },
     )

@@ -143,3 +143,24 @@ body, html, #root {
   background-color: #f1f1f1;
   color: #000;
 }
+.bubble > *:first-child {
+  margin-top: 0;
+}
+
+.bubble > *:last-child {
+  margin-bottom: 0;
+}
+.messages {
+  overflow-y: auto;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+.chat-section {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.messages {
+  flex: 1;
+}

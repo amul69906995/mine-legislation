@@ -6,7 +6,7 @@ from langchain_groq import ChatGroq
 load_dotenv()
 
 # Pinecone
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY_2Y"))
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY_2"))
 pc_index= os.getenv("PINECONE_INDEX")
 # LLM
 llm = ChatGroq(

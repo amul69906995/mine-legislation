@@ -30,10 +30,17 @@ def retrieve(state: State):
     )
 
     docs = []
+    # for hit in results["result"]["hits"]:
+    #     docs.append({
+    #         "source": hit["fields"]["source"],
+    #         "heading": hit["fields"]["heading"],
+    #         "chunk_text": hit["fields"]["chunk_text"],
+    #     })
+
     for hit in results["result"]["hits"]:
         docs.append({
-            "source": hit["fields"]["source"],
-            "heading": hit["fields"]["heading"],
+            "source": hit["fields"]["file_name"],
+            "heading": hit["fields"]["section_title"],
             "chunk_text": hit["fields"]["chunk_text"],
         })
 

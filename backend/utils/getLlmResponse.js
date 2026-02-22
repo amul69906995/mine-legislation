@@ -96,7 +96,7 @@ function cleanJSON(text) {
 
 async function getLlmResponse(query, chunks) {
     const context = buildContextForLLM(chunks);
-    console.log(context)
+    //console.log(context)
     const fullContents = [
         {
             role: "user",
@@ -120,8 +120,8 @@ async function getLlmResponse(query, chunks) {
         let raw = response.text;
         const cleaned = cleanJSON(raw);
         const data = JSON.parse(cleaned);
-        console.log(raw)
-        console.log(data);
+        //console.log(raw)
+        //console.log(data);
         return data.answer;
     } catch (error) {
         console.error("Error generating content", error.message);

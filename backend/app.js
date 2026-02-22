@@ -43,6 +43,7 @@ app.post('/chat', async (req, res, next) => {
             },
             fields: ["chunk_text", "section_title", "file_name", "jurisdiction_level", "mineral_scope"],
         });
+        console.log("this is response from pinecone",response)
         //23.6%, 38.2%, 50%, 61.8%, 78.6%
         //score level above .236
         const MIN_CHUNK_SCORE = 0.236;
@@ -77,7 +78,7 @@ app.post('/chat', async (req, res, next) => {
         }
         //console.log(selectedHits);
         const llmResponse = await getLlmResponse(query, selectedHits);
-        console.log(llmResponse)
+        //console.log(llmResponse)
         // const llmResponse = `dummy llm response`;
         return res.json({
             message: llmResponse,

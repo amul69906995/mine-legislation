@@ -11,7 +11,8 @@ class State(TypedDict):
     messages: Annotated[list, add_messages]
     context: List[dict]
 
-
+print(pc_index)
+print("this is from rag.py")
 def retrieve(state: State):
     query = state["messages"][-1].content
     index = pc.Index(pc_index)

@@ -31,9 +31,9 @@
 import { useEffect, useRef } from 'react';
 import MessageForm from './MessageForm';
 import './styles.css';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from "rehype-highlight";
+// import ReactMarkdown from 'react-markdown';
+// import remarkGfm from 'remark-gfm';
+// import rehypeHighlight from "rehype-highlight";
 
 function ChatSection({ messages, onSend, replyWait }) {
   const messagesEndRef = useRef(null);
@@ -48,12 +48,15 @@ function ChatSection({ messages, onSend, replyWait }) {
         {messages.map((msg, idx) => (
           <div key={idx} className={`message ${msg.sender}`}>
             <div className="bubble">
-              <ReactMarkdown
+              {/* <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeHighlight]}
-              >
+                components={{
+                  p: ({ children }) => <span>{children}<br /></span>
+                }}
+              > */}
                 {msg.text}
-              </ReactMarkdown>
+              {/* </ReactMarkdown> */}
             </div>
           </div>
         ))}

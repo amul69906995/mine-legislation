@@ -2,8 +2,9 @@ from typing import Annotated, List
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
+from langgraph.checkpoint.memory import InMemorySaver
 
-from config import pc, llm
+from config import pc, pc_index, llm
 
 
 class State(TypedDict):
@@ -13,10 +14,10 @@ class State(TypedDict):
 
 def retrieve(state: State):
     query = state["messages"][-1].content
-    index = pc.Index("mine-legislation")
+    index = pc.Index(pc_index)
 
     results = index.search(
-        namespace="coal-legislation",
+        namespace="india",
         query={
             "top_k": 3,
             "inputs": {"text": query},
@@ -70,5 +71,5 @@ def build_graph():
     graph_builder.add_edge(START, "retrieve")
     graph_builder.add_edge("retrieve", "generate")
     graph_builder.add_edge("generate", END)
-
-    return graph_builder.compile()
+    checkpointer = InMemorySaver()
+    return graph_builder.compile(checkpointer=checkpointer)

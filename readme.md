@@ -1,10 +1,48 @@
-make sure you go in particular folder then run these command
-cd aman_aditya_training_model\app
-aman backend : python -m uvicorn main:app 
+# Mine Legislation
+
+A comprehensive application for processing and managing legislative documents with AI-powered analysis using RAG (Retrieval-Augmented Generation).
+
+## Project Structure
+
+- **aman_aditya_training_model/** - ML training models and RAG implementation
+- **backend/** - Node.js central backend server
+- **frontend/** - React/Vite frontend application
+
+## Setup Instructions
+
+### 1. ML Training Model (Python Backend)
+
+```bash
+cd aman_aditya_training_model/app
+python -m uvicorn main:app
+```
+
+### 2. Frontend (React/Vite)
+
+```bash
 cd frontend
-frontend : npm run dev
+npm run dev
+```
+
+### 3. Central Backend (Node.js)
+
+```bash
 cd backend
-central backend: nodemon app.js
---
-max 100mb limit from frontend accept only pdf format
-goes to corresponding data country wise folder and saved to db and duplicate file not included until u cahnge 1 bit in file we are using sha 256 hash
+nodemon app.js
+```
+
+## Features & Constraints
+
+### File Upload Specifications
+- **Maximum file size:** 100 MB
+- **Accepted format:** PDF only
+- **Storage:** Files organized country-wise in corresponding data folders
+- **Duplicate handling:** Duplicate files are excluded until modified (1-bit change detection using Node crypto library)
+
+## Database Integration
+
+- Files are automatically saved to the database upon upload
+- Data is organized by country for organized retrieval and processing
+
+
+

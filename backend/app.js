@@ -170,9 +170,7 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
         });
         // 🔥 Invoke Python processing here (background)
         // spawn(...) etc.
-
-
-        //change status of that file,hash
+             //change status of that file and save document to db
         res.json({
             message: "File uploaded successfully. Processing has started. Please refresh to check the latest status.",
             hash,

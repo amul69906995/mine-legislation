@@ -6,9 +6,11 @@ langchain_groq
 dotenv
 typing
 openai
-docling
+# docling
 transformers
 pinecone
 pydantic
 fastapi
 uvicorn
+pdf2image
+pytesseract

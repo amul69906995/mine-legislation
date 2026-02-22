@@ -44,5 +44,7 @@ nodemon app.js
 - Files are automatically saved to the database upon upload
 - Data is organized by country for organized retrieval and processing
 
+//we are using pinecone apikey 2
+// we are using a central pipeline (need to be done)
 
 

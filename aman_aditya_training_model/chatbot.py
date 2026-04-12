@@ -3,14 +3,17 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langchain_groq import ChatGroq
+from langgraph.checkpoint.memory import InMemorySaver
 import os
 from openai import OpenAI
 from pinecone import Pinecone, ServerlessSpec
 from dotenv import load_dotenv
 load_dotenv()
 
+import uuid
+thread_id = str(uuid.uuid4())
 
-pc=Pinecone(api_key=os.getenv('PINECONE_API_KEY'))
+pc=Pinecone(api_key=os.getenv('PINECONE_API_KEY_2'))
 # from groq import Groq
 
 llm= ChatGroq(model="groq/compound", api_key=os.getenv('API_KEY'))
@@ -29,11 +32,11 @@ class State(TypedDict):
 
 def retrieve(state:State):
     Query= state["messages"][-1].content
-    index_name='mine-legislation'
+    index_name='minelegislation'
     index=pc.Index(index_name)
     # print(1)
     results = index.search(
-        namespace="coal-legislation",
+        namespace="india",
         query={
             "top_k": 10,
             "inputs": {
@@ -52,12 +55,13 @@ def retrieve(state:State):
     
     docs=[]
     
-    for hit in results['result']['hits']:
-        print(hit["_score"])
-        docs.append({"source":hit["fields"]["source"],
-            "heading": hit['fields']['heading'],
-            "chunk_text": hit['fields']['chunk_text']})
-
+    for hit in results["result"]["hits"]:
+        # print(hit["_score"])
+        docs.append({
+            "source": hit["fields"]["file_name"],
+            "heading": hit["fields"]["section_title"],
+            "chunk_text": hit["fields"]["chunk_text"],
+        })
     # print(3)
     return {"context":docs}
 
@@ -85,12 +89,14 @@ def generate(state: State):
 graph_builder= StateGraph(State)
 graph_builder.add_node("retrieve", retrieve)
 graph_builder.add_node("generate", generate)
+# add a final answer node to apply human interruption for the answer building
 
 graph_builder.add_edge(START, "retrieve")
 graph_builder.add_edge("retrieve", "generate")
 graph_builder.add_edge("generate", END)
+checker=InMemorySaver()
 
-graph = graph_builder.compile()
+graph = graph_builder.compile(checkpointer=checker)
 # # print(graph_builder.nodes)  # Should include "chatbot"
 # print(graph_builder.edges)  # Should connect START -> "chatbot" -> END
 
@@ -105,10 +111,16 @@ while True:
     if user_input.lower() in ["quit","exit","q"]:
         print("goodbye")
         break
-    for event in graph.stream({"messages":[("user",user_input)]},stream_mode="updates"):
+    # for event in graph.stream({"messages":[("user",user_input)]},stream_mode="updates"):
+    #     if "generate" in event:
+    #         print("Assistant:", event["generate"]["messages"][-1].content)
+    for event in graph.stream(
+        {"messages": [("user", user_input)]},
+        stream_mode="updates",
+        config={"configurable": {"thread_id": thread_id}}
+    ):
         if "generate" in event:
             print("Assistant:", event["generate"]["messages"][-1].content)
-    
     # for event in graph.stream({"messages":[("user",user_input)]}):
         # for value in event.values():
         #     # if("messages "in value):

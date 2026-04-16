@@ -7,18 +7,15 @@ from pinecone import Pinecone
 
 # Load environment variables
 load_dotenv()
-pc = Pinecone(api_key=os.getenv('PINECONE_API_KEY'))
+pc = Pinecone(api_key=os.getenv('PINECONE_API_KEY_2'))
 
 index_name = 'mine-legislation'
 namespace = 'coal-legislation'
 index = pc.Index(index_name)
 
 # Directory containing chunk JSON files
-chunk_dir = "/Users/amanaditya/Documents/thesis/chunk_data"
+chunk_dir = "/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/chunked_data"
 
-print("="*60)
-print("Loading chunks from JSON files...")
-print("="*60)
 
 records = []
 total_files = 0

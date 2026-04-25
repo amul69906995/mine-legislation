@@ -7,6 +7,8 @@ A comprehensive application for processing and managing legislative documents wi
 - **aman_aditya_training_model/** - ML training models and RAG implementation
 - **backend/** - Node.js central backend server
 - **frontend/** - React/Vite frontend application
+- <img width="566" height="607" alt="image" src="https://github.com/user-attachments/assets/808e32e9-eb09-4c78-8a4b-9bd91d62690a" />
+
 
 ## Setup Instructions
 

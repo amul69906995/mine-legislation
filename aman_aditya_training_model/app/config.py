@@ -14,3 +14,7 @@ llm = ChatGroq(
     model="groq/compound",
     api_key=os.getenv("API_KEY"),
 )
+llm_small= ChatGroq(
+    model="groq/compound-mini",
+    api_key=os.getenv("API_KEY"),
+)

@@ -10,7 +10,8 @@ require('dotenv').config()
 const getLlmResponse = require('./utils/getLlmResponse')
 const connectToDb = require('./utils/db_connection')
 const appError = require('./error/appError')
-const FileModel=require('./model/file_model')
+const FileModel = require('./model/file_model')
+const { spawn } = require("child_process");
 
 //db connections
 connectToDb()
@@ -43,7 +44,7 @@ app.post('/chat', async (req, res, next) => {
             },
             fields: ["chunk_text", "section_title", "file_name", "jurisdiction_level", "mineral_scope"],
         });
-        console.log("this is response from pinecone",response)
+        console.log("this is response from pinecone", response)
         //23.6%, 38.2%, 50%, 61.8%, 78.6%
         //score level above .236
         const MIN_CHUNK_SCORE = 0.236;
@@ -107,7 +108,7 @@ app.post('/chat', async (req, res, next) => {
     }
     else if (model === "trained") {
         console.log("here we will invoke trained model with user query and country")
-        res.json({ message: "here we will invoke trained model with user query and country" })
+        res.json({ message: "here we will invoke trained model with user query and country still training..." })
     }
 })
 app.get("/file-info", async (req, res, next) => {
@@ -142,13 +143,25 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
             .createHash("sha256")
             .update(file.buffer)
             .digest("hex");
-        const isFileExist = await FileModel.findOne({ hash });
-        console.log("isFileExist inside /upload",isFileExist)
+
+        const isFileExist = await FileModel.findOne({
+            hash,
+            status: {
+                $in: ["processing", "completed"]
+            }
+        });
+        console.log("isFileExist inside /upload", isFileExist)
+
         if (isFileExist) {
+
             return next(
-                new appError("Duplicate file detected (same content already exists)", 400)
+                new appError(
+                    `File already ${isFileExist.status}`,
+                    400
+                )
             );
         }
+
         // Create country folder
         const uploadDir = path.join(__dirname, "data", country);
 
@@ -171,10 +184,101 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
         });
         // 🔥 Invoke Python processing here (background)
         // spawn(...) etc.
-             //change status of that file and save document to db
-        res.json({
-            message: "File uploaded successfully. Processing has started. Please refresh to check the latest status.",
-            hash,
+        //change status of that file and save document to db
+        // SPAWN PYTHON PROCESS
+
+
+        const pythonProcess = spawn("python", [
+
+            path.join(
+                __dirname,
+                "..",
+                "aman_aditya_training_model",
+                "data_pipeline",
+                "process_document.py"
+            ),
+
+            filePath,
+
+            country.toLowerCase(),
+
+            newFile._id.toString()
+        ]);
+        pythonProcess.stdout.on("data", (data) => {
+
+            console.log(
+                `PYTHON STDOUT: ${data.toString()}`
+            );
+        });
+        pythonProcess.stderr.on("data", (data) => {
+
+            console.error(
+                `PYTHON STDERR: ${data.toString()}`
+            );
+        });
+        pythonProcess.on("close", async (code) => {
+
+            console.log(
+                `Python exited with code ${code}`
+            );
+            try {
+
+                if (code === 0) {
+
+                    await FileModel.findByIdAndUpdate(
+                        newFile._id,
+                        {
+                            status: "completed",
+                            processedAt: new Date()
+                        }
+                    );
+
+                } else {
+                    // DELETE LOCAL FILE
+                    // try {
+
+                    //     if (fs.existsSync(filePath)) {
+
+                    //         fs.unlinkSync(filePath);
+
+                    //         console.log(
+                    //             `Deleted failed file: ${filePath}`
+                    //         );
+                    //     }
+
+                    // } catch (deleteErr) {
+
+                    //     console.error(
+                    //         "Failed to delete file:",
+                    //         deleteErr
+                    //     );
+                    // }
+                    await FileModel.findByIdAndUpdate(
+                        newFile._id,
+                        {
+                            status: "failed",
+                            errorMessage:
+                                "Pipeline processing failed"
+                        }
+                    );
+                }
+
+            } catch (err) {
+
+                console.error(
+                    "MongoDB update failed:",
+                    err
+                );
+            }
+        });
+        return res.json({
+
+            success: true,
+
+            message:
+                "File uploaded successfully. Processing started.",
+
+            fileId: newFile._id
         });
 
     } catch (err) {

@@ -4,18 +4,32 @@ import json
 import time
 from dotenv import load_dotenv 
 from pinecone import Pinecone
+from data_extraction import extract_text_with_structure, output_folder
+from data_wrangling import process_file,file_path, output_path, TOKEN_LIMIT, OVERLAP_WORDS
+
 
 # Load environment variables
 load_dotenv()
 pc = Pinecone(api_key=os.getenv('PINECONE_API_KEY_2'))
 
-index_name = 'mine-legislation'
+index_name = os.getenv('PINECONE_INDEX')
 namespace = 'coal-legislation'
 index = pc.Index(index_name)
 
 # Directory containing chunk JSON files
 chunk_dir = "/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/chunked_data"
 
+
+
+def process_pdf(input_path,):
+    output_path=os.path.join(output_folder, os.path.basename(input_path).replace(".pdf", ".txt"))   
+    if input_path.endswith(".pdf"):
+        return extract_text_with_structure(input_path, output_path)
+    else:
+        print(f"Skipping non-PDF file: {input_path}")
+        return False
+
+process_file(file_path, output_path, token_limit=TOKEN_LIMIT, overlap_words=OVERLAP_WORDS)
 
 records = []
 total_files = 0

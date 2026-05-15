@@ -4,8 +4,8 @@ from pdf2image.pdf2image import pdfinfo_from_path
 import os
 import re
 
-input_folder="/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/india"
-output_folder="/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/india_textual_data"
+input_folder="/Users/amanaditya/Desktop/new/mine-legislation/aman_aditya_training_model/data_pipeline/india"   #file path needed
+output_folder="mine-legislation/aman_aditya_training_model/data_pipeline/textual_data"
 
 # Ensure output folder exists
 os.makedirs(output_folder, exist_ok=True)
@@ -61,10 +61,12 @@ def extract_text_with_structure(pdf_path, output_path):
         return False
 
 # Process all PDFs
-for filename in os.listdir(input_folder):
-    if filename.endswith(".pdf"):
-        input_path = os.path.join(input_folder, filename)
-        output_path = os.path.join(output_folder, filename.replace(".pdf", ".txt"))
-        extract_text_with_structure(input_path, output_path)
+# for filename in os.listdir(input_folder):
+#     if filename.endswith(".pdf"):
+#         input_path = os.path.join(input_folder, filename)
+#         output_path = os.path.join(output_folder, filename.replace(".pdf", ".txt"))
+#         extract_text_with_structure(input_path, output_path)
+
+#process new folder
 
 print("Extraction complete.")

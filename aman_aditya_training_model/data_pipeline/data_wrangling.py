@@ -2,7 +2,7 @@ import os
 import json
 import re
 
-output_folder="/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/india_textual_data"
+output_folder="mine-legislation/aman_aditya_training_model/data_pipeline/textual_data"
 
 # Configuration
 TOKEN_LIMIT = 512  # Keep chunks to ~512 tokens
@@ -210,7 +210,7 @@ for filename in os.listdir(output_folder):
             "/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/chunked_data",
             filename.replace(".txt", "_chunks.json")
         )
-        process_file(file_path, output_path, token_limit=TOKEN_LIMIT, overlap_words=OVERLAP_WORDS)
+#         process_file(file_path, output_path, token_limit=TOKEN_LIMIT, overlap_words=OVERLAP_WORDS)
 
 
 print("Wrangling pipeline complete!")

@@ -79,7 +79,7 @@ const Upload = () => {
                 throw new Error(data.message || "Upload failed. Please try again.");
             }
 
-            setSuccess("File uploaded successfully!");
+            setSuccess("File uploaded successfully! processing ... ");
             setFile(null);
             setCountry("");
             setPreviewUrl(null);

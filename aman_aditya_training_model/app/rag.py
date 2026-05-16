@@ -4,7 +4,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import InMemorySaver
 
-from config import pc, pc_index, llm, llm_small
+from config import pc, pc_index, llm
 
 
 class State(TypedDict):
@@ -12,41 +12,41 @@ class State(TypedDict):
     context: List[dict]
     is_valid: bool
 
-def route_on_validation(state: State):
-    """Route based on validation result stored in state."""
-    if state.get("is_valid", False):
-        return "accepted"
-    return "rejected"
+# def route_on_validation(state: State):
+#     """Route based on validation result stored in state."""
+#     if state.get("is_valid", False):
+#         return "accepted"
+#     return "rejected"
 
-def guardrail(state: State):
-    last_message = state["messages"][-1]
-    generated_answer = last_message.content
+# def guardrail(state: State):
+#     last_message = state["messages"][-1]
+#     generated_answer = last_message.content
 
-    system_prompt = f"""
-You are a legal assistant specialised in Indian Mining Law.
-Check whether the generated answer is strictly relevant to Indian mining law or related mining regulations or anything regarding the provided context.
-If the answer is relevant, respond with exactly: accepted
-Otherwise, respond with exactly: rejected
+#     system_prompt = f"""
+# You are a legal assistant specialised in Indian Mining Law.
+# Check whether the generated answer is strictly relevant to Indian mining law or related mining regulations or anything regarding the provided context.
+# If the answer is relevant, respond with exactly: accepted
+# Otherwise, respond with exactly: rejected
 
-Answer to classify:
-{generated_answer}
-"""
-    messages = [("system", system_prompt), ("user", generated_answer)]
-    response = llm_small.invoke(messages)
+# Answer to classify:
+# {generated_answer}
+# """
+#     messages = [("system", system_prompt), ("user", generated_answer)]
+#     response = llm_small.invoke(messages)
 
-    classification = response.content.strip().lower()
-    is_valid = "accepted" in classification
+#     classification = response.content.strip().lower()
+#     is_valid = "accepted" in classification
     
-    return {"is_valid": is_valid}
+#     return {"is_valid": is_valid}
 
-def reject_response(state: State):
-    return {
-        "messages": [(
-            "assistant",
-            "Sorry, this question does not appear relevant to my mining-law capabilities. "
-            "Please ask a question about Indian mining law, regulation, permits, royalties, or related topics."
-        )]
-    }
+# def reject_response(state: State):
+#     return {
+#         "messages": [(
+#             "assistant",
+#             "Sorry, this question does not appear relevant to my mining-law capabilities. "
+#             "Please ask a question about Indian mining law, regulation, permits, royalties, or related topics."
+#         )]
+#     }
 
 print(pc_index)
 print("this is from rag.py")
@@ -94,7 +94,8 @@ def generate(state: State):
     system_prompt = f"""
 You are a legal assistant specialised in Indian Mining Law.
 Answer ONLY using the provided context and keep it concise.
-If the answer is not present, say:
+If the answer is not present but related to mining india use webtool
+else, say:
 "The document does not specify this."
 
 Context:
@@ -112,23 +113,23 @@ def build_graph():
 
     graph_builder.add_node("retrieve", retrieve)
     graph_builder.add_node("generate", generate)
-    graph_builder.add_node("guardrail", guardrail)
-    graph_builder.add_node("reject_response", reject_response)
+    # graph_builder.add_node("guardrail", guardrail)
+    # graph_builder.add_node("reject_response", reject_response)
 
     graph_builder.add_edge(START, "retrieve")
     graph_builder.add_edge("retrieve", "generate")
-    # graph_builder.add_edge("generate", END)
-    graph_builder.add_edge("generate", "guardrail")
+    graph_builder.add_edge("generate", END)
+    # graph_builder.add_edge("generate", "guardrail")
 
-    graph_builder.add_conditional_edges(
-        "guardrail",
-        route_on_validation,
-        {
-            "accepted": END,
-            "rejected": "reject_response",
-        }
-    )
-    graph_builder.add_edge("reject_response", END)
+    # graph_builder.add_conditional_edges(
+    #     "guardrail",
+    #     route_on_validation,
+    #     {
+    #         "accepted": END,
+    #         "rejected": "reject_response",
+    #     }
+    # )
+    # graph_builder.add_edge("reject_response", END)
 
     checkpointer = InMemorySaver()
     return graph_builder.compile(checkpointer=checkpointer)

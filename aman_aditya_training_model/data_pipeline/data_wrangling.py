@@ -203,13 +203,13 @@ def process_file(file_path, output_path, token_limit=512, overlap_words=50):
 # print("Starting data wrangling pipeline")
 # print("="*60)
 
-for filename in os.listdir(output_folder):
-    if filename.endswith(".txt"):
-        file_path = os.path.join(output_folder, filename)
-        output_path = os.path.join(
-            "/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/chunked_data",
-            filename.replace(".txt", "_chunks.json")
-        )
+# for filename in os.listdir(output_folder):
+#     if filename.endswith(".txt"):
+#         file_path = os.path.join(output_folder, filename)
+#         output_path = os.path.join(
+#             "/Users/amanaditya/Desktop/new/mine-legislation/data_pipeline/chunked_data",
+#             filename.replace(".txt", "_chunks.json")
+#         )
 #         process_file(file_path, output_path, token_limit=TOKEN_LIMIT, overlap_words=OVERLAP_WORDS)
 
 

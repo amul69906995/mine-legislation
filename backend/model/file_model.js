@@ -23,7 +23,7 @@ const fileSchema = new mongoose.Schema(
         hash: {
             type: String,
             required: true,
-            unique: true,
+            // unique: true,
         },
 
         status: {

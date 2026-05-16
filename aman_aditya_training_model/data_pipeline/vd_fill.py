@@ -315,7 +315,7 @@ def upsert_records(records, namespace: str, batch_size: int = 50):
 # -----------------------------
 # Main pipeline entrypoint
 # -----------------------------
-def ingest_pdf_to_namespace(pdf_path: str, namespace: str, cleanup: bool = True):
+def ingest_pdf_to_namespace(pdf_path: str, namespace: str, cleanup: bool = False):
     """
     End-to-end pipeline:
       PDF -> OCR text -> chunks -> vectors -> Pinecone namespace
@@ -355,6 +355,10 @@ def ingest_pdf_to_namespace(pdf_path: str, namespace: str, cleanup: bool = True)
 if __name__ == "__main__":
     file_path=sys.argv[1]
     namespace=sys.argv[2]
+    # file_path="/Users/amanaditya/Desktop/new/mine-legislation/backend/data/australia/2011_074.pdf"
+    # namespace="australia"
+    print (f"File: {file_path}")
+    print (f"Namespace: {namespace}")
     ingest_pdf_to_namespace(
         pdf_path=file_path,
         namespace=namespace

@@ -69,4 +69,4 @@ def extract_text_with_structure(pdf_path, output_path):
 
 #process new folder
 
-print("Extraction complete.")
+# print("Extraction complete.")

@@ -189,7 +189,7 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
 
 
         const pythonProcess = spawn("python", [
-
+            "-u",//this print print in python code
             path.join(
                 __dirname,
                 "..",

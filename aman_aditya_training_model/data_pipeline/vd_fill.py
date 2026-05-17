@@ -212,11 +212,13 @@ from data_wrangling import process_file, TOKEN_LIMIT, OVERLAP_WORDS
 # -----------------------------
 # Setup
 # -----------------------------
-load_dotenv()
+_PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
+_ENV_PATH = os.path.join(_PIPELINE_DIR, "..", ".env")
+load_dotenv(dotenv_path=_ENV_PATH)
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY_2"))
 index = pc.Index(os.getenv("PINECONE_INDEX"))
 
-CHUNK_DIR = "mine-legislation/aman_aditya_training_model/data_pipeline/chunked_data"
+CHUNK_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chunked_data")
 os.makedirs(CHUNK_DIR, exist_ok=True)
 
 

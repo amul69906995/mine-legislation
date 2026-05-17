@@ -164,20 +164,12 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
 
         const isFileExist = await FileModel.findOne({
             hash,
-            status: {
-                $in: ["processing", "completed"]
-            }
+            status: { $in: ["processing", "completed"] }
         });
         console.log("isFileExist inside /upload", isFileExist)
 
         if (isFileExist) {
-
-            return next(
-                new appError(
-                    `File already ${isFileExist.status}`,
-                    400
-                )
-            );
+            return next(new appError(`File already ${isFileExist.status}`, 400));
         }
 
         // Create country folder
@@ -191,15 +183,21 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
 
         fs.writeFileSync(filePath, file.buffer);
 
-        // 🔥 Save in DB
-        const newFile = await FileModel.create({
-            filename: safeName,
-            country,
-            filePath,
-            hash,
-            fileSize: file.size,
-            status: "processing",
-        });
+        // Reuse failed record if hash already exists, otherwise create fresh
+        const newFile = await FileModel.findOneAndUpdate(
+            { hash },
+            {
+                filename: safeName,
+                country,
+                filePath,
+                hash,
+                fileSize: file.size,
+                status: "processing",
+                errorMessage: null,
+                processedAt: null,
+            },
+            { upsert: true, returnDocument: "after" }
+        );
         // 🔥 Invoke Python processing here (background)
         // spawn(...) etc.
         //change status of that file and save document to db

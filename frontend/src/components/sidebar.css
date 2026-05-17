@@ -1,11 +1,17 @@
+/* =========================
+   DESKTOP SIDEBAR
+========================= */
+
 .sidebar {
-  width: fit-content;
+  width: 25%;
   min-width: 260px;
+  max-width: 340px;
   height: 100vh;
+  flex-shrink: 0;
   background-color: #1e1e2f;
   color: white;
   padding: 20px;
-  box-sizing: border-box;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -33,7 +39,6 @@
   font-size: 14px;
   font-weight: 500;
   transition: background-color 0.2s ease;
-  box-sizing: border-box;
 }
 
 .sidebar-btn:hover {
@@ -67,4 +72,60 @@
   border-radius: 6px;
   border: none;
   font-size: 14px;
+}
+
+/* =========================
+   MOBILE NAVBAR
+========================= */
+
+.mobile-navbar {
+  display: none;
+}
+
+.mobile-topbar {
+  height: 70px;
+  background-color: #1e1e2f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+
+.mobile-topbar h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.mobile-menu {
+  background-color: #1e1e2f;
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 925px) {
+  .desktop-sidebar {
+    display: none;
+  }
+
+  .mobile-navbar {
+    display: block;
+    width: 100%;
+  }
+
+  .sidebar-btn {
+    width: 100%;
+  }
 }

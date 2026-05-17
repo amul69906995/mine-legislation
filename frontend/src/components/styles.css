@@ -1,1 +1,41 @@
-#root { margin: 0; padding: 0; height: 100%; width: 100%; font-family: sans-serif; overflow: hidden; } * { box-sizing: border-box; } .app-layout { display: flex; width: 100vw; height: 100vh; overflow: hidden; } /* LEFT SIDEBAR */ .sidebar { width: 25%; min-width: 260px; max-width: 340px; height: 100vh; flex-shrink: 0; background-color: #1e1e2f; color: white; padding: 20px; overflow: hidden; /* no scroll */ } /* RIGHT CONTENT */ .main-content { flex: 1; height: 100vh; overflow-y: auto; background-color: #f4f4f8; }
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-layout {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f4f4f8;
+  min-height: 0;   /* important */
+}
+
+/* responsive */
+@media (max-width: 925px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .main-content {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+  }
+}

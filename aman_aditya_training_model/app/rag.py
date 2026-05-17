@@ -48,18 +48,14 @@ class State(TypedDict):
 #         )]
 #     }
 
-print(pc_index)
-print("this is from rag.py")
 def retrieve(state: State):
     query = state["messages"][-1].content
     index = pc.Index(pc_index)
 
     results = index.search(
         namespace="india",
-        query={
-            "top_k": 3,
-            "inputs": {"text": query},
-        },
+        top_k=3,
+        inputs={"text": query},
         rerank={
             "model": "bge-reranker-v2-m3",
             "top_n": 3,

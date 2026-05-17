@@ -271,7 +271,7 @@ def chunk_text_file(txt_path: str) -> str:
     return chunk_path
 
 
-def build_records(chunk_json_path: str):
+def build_records(chunk_json_path: str,namespace:str,mongoIdForFileName:str):
     """Build Pinecone records from chunk JSON."""
     source_name = os.path.basename(chunk_json_path).replace("_chunks.json", ".txt")
 
@@ -300,6 +300,8 @@ def build_records(chunk_json_path: str):
             "chunk_id": chunk_id,
             "parent_chunk_id": parent_id,
             "word_count": word_count,
+            "country":namespace,
+            "mongoIdForFileName":mongoIdForFileName
         })
 
     return records
@@ -317,7 +319,7 @@ def upsert_records(records, namespace: str, batch_size: int = 50):
 # -----------------------------
 # Main pipeline entrypoint
 # -----------------------------
-def ingest_pdf_to_namespace(pdf_path: str, namespace: str, cleanup: bool = True):
+def ingest_pdf_to_namespace(pdf_path: str, namespace: str, mongoIdForFileName: str , cleanup: bool = True):
     """
     End-to-end pipeline:
       PDF -> OCR text -> chunks -> vectors -> Pinecone namespace
@@ -327,7 +329,7 @@ def ingest_pdf_to_namespace(pdf_path: str, namespace: str, cleanup: bool = True)
 
     txt_path = process_pdf(pdf_path)
     chunk_path = chunk_text_file(txt_path)
-    records = build_records(chunk_path)
+    records = build_records(chunk_path,namespace,mongoIdForFileName)
 
     if not records:
         raise ValueError("No records created from document")
@@ -357,6 +359,7 @@ def ingest_pdf_to_namespace(pdf_path: str, namespace: str, cleanup: bool = True)
 if __name__ == "__main__":
     file_path=sys.argv[1]
     namespace=sys.argv[2]
+    mongoIdForFileName=sys.argv[3]
     #aman pc test
     # file_path="/Users/amanaditya/Desktop/new/mine-legislation/backend/data/australia/2011_074.pdf"
     # namespace="australia"
@@ -367,5 +370,6 @@ if __name__ == "__main__":
     print (f"Namespace: {namespace}")
     ingest_pdf_to_namespace(
         pdf_path=file_path,
-        namespace=namespace
+        namespace=namespace,
+        mongoIdForFileName=mongoIdForFileName
     )

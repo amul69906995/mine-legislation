@@ -6,11 +6,8 @@ const indexName = 'minelegislation';
 const { fetchBatchChunk, fetchAllChunk, connectToDb, client, db, col, MONGO_COLLECTION } = require('./db')
 //console.log(process.env.PINECONE_API_KEY_2)
 
-connectToDb().then(() => console.log("data connected success")).catch(error => {
-    console.log(error)
-})
 const pc = new Pinecone({
-    apiKey: process.env.PINECONE_API_KEY_2
+    apiKey: process.env.PINECONE_API_KEY_2 || process.env.PINECONE_API_KEY
 });
 const namespace = pc.index(indexName, process.env.PINECONE_HOST).namespace(MONGO_COLLECTION);
 
@@ -80,8 +77,13 @@ const sendChunkToPineCone = async () => {
     }
 }
 
-sendChunkToPineCone().catch(e => {
-    console.log(e)
-})
-// createPineConeIndex()
-//we need to recursively call sendchunkTopine until we meet base condition i.e we don't have any chunk left
+module.exports = { sendChunkToPineCone, createPineConeIndex };
+
+// only auto-run when invoked directly (node basic_embedding.js), not on require()
+if (require.main === module) {
+    connectToDb()
+        .then(() => console.log("data connected success"))
+        .then(() => sendChunkToPineCone())
+        .catch(e => console.log(e));
+    // createPineConeIndex()
+}

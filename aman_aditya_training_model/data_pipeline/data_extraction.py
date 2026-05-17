@@ -4,8 +4,9 @@ from pdf2image.pdf2image import pdfinfo_from_path
 import os
 import re
 
-input_folder="/Users/amanaditya/Desktop/new/mine-legislation/aman_aditya_training_model/data_pipeline/india"   #file path needed
-output_folder="mine-legislation/aman_aditya_training_model/data_pipeline/textual_data"
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+input_folder = os.path.join(_THIS_DIR, "india")
+output_folder = os.path.join(_THIS_DIR, "textual_data")
 
 # Ensure output folder exists
 os.makedirs(output_folder, exist_ok=True)

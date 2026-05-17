@@ -109,22 +109,23 @@ async function getLlmResponse(query, chunks) {
         }
     ];
 
+    const response = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: fullContents,
+        config: {
+            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            responseMimeType: "application/json",
+        }
+    });
+    let raw = response.text;
+    const cleaned = cleanJSON(raw);
     try {
-        const response = await ai.models.generateContent({
-            model: MODEL_NAME,
-            contents: fullContents,
-            config: {
-                systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }
-            }
-        });
-        let raw = response.text;
-        const cleaned = cleanJSON(raw);
         const data = JSON.parse(cleaned);
-        //console.log(raw)
-        //console.log(data);
         return data.answer;
-    } catch (error) {
-        console.error("Error generating content", error.message);
+    } catch (err) {
+        console.error("Gemini returned non-JSON output:", raw);
+        // fall back to the raw text so the user gets something useful
+        return raw;
     }
 }
 module.exports = getLlmResponse;

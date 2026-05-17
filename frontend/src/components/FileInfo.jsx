@@ -15,7 +15,8 @@ const FileInfoList = () => {
                 setFiles(data.files || []);
                 setLoading(false);
             } catch (error) {
-                setError("Failed to fetch files",error);
+                console.error("Failed to fetch files", error);
+                setError(`Failed to fetch files: ${error?.message ?? "unknown error"}`);
                 setLoading(false);
             }
         };

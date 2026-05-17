@@ -17,25 +17,37 @@ const { spawn } = require("child_process");
 connectToDb()
 
 //cors
-app.use(cors())
+const corsOrigin = process.env.FRONTEND_URL || true;
+app.use(cors({ origin: corsOrigin }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 //pinecone
 const pc = new Pinecone({
-    apiKey: process.env.PINECONE_API_KEY_2
+    apiKey: process.env.PINECONE_API_KEY_2 || process.env.PINECONE_API_KEY
 });
 const index = pc.index(
     process.env.PINECONE_INDEX, process.env.PINECONE_HOST);
+
+// allowed countries (mirrors frontend Sidebar/Upload options)
+const ALLOWED_COUNTRIES = new Set([
+    "india", "australia", "canada", "russia", "usa", "south africa"
+]);
 
 //routes
 app.get('/', (req, res) => {
     res.send("good to go!!")
 })
 app.post('/chat', async (req, res, next) => {
+    try {
     const { country, query, model } = req.body;
     console.log(country, query, model)
+    if (!query) return next(new appError("query required", 400));
+    if (!model) return next(new appError("model required", 400));
     if (model === "rag") {
+        if (!country || !ALLOWED_COUNTRIES.has(country)) {
+            return next(new appError("invalid country", 400));
+        }
         const namespace = index.namespace(country);
         const response = await namespace.searchRecords({
             query: {
@@ -48,7 +60,7 @@ app.post('/chat', async (req, res, next) => {
         //23.6%, 38.2%, 50%, 61.8%, 78.6%
         //score level above .236
         const MIN_CHUNK_SCORE = 0.236;
-        const hits = response?.result?.hits;
+        const hits = response?.result?.hits || [];
         console.log("hits", hits)
         const validHits = hits.filter(h => h._score >= MIN_CHUNK_SCORE);
 
@@ -59,18 +71,12 @@ app.post('/chat', async (req, res, next) => {
             });
         }
         const topScore = validHits[0]._score;
-        const avgScore = hits.reduce((sum, h) => sum + h._score, 0) / hits.length;
+        const avgScore = validHits.reduce((sum, h) => sum + h._score, 0) / validHits.length;
         console.log("topScore:", topScore, "avgScore:", avgScore);
 
         let selectedHits;
-        if (avgScore < .236) {
-            return res.json({
-                message: "Your query does not relate to mining legislation.",
-                rag_source: [],
-            });
-        }
-        else if (avgScore < 0.382) {
-            selectedHits = validHits.filter(h => h._score >= 0.236);
+        if (avgScore < 0.382) {
+            selectedHits = validHits;
         } else {
             selectedHits = validHits.filter(h => h._score >= 0.382);
         }
@@ -110,6 +116,12 @@ app.post('/chat', async (req, res, next) => {
         console.log("here we will invoke trained model with user query and country")
         res.json({ message: "here we will invoke trained model with user query and country still training..." })
     }
+    else {
+        return next(new appError(`unknown model: ${model}`, 400));
+    }
+    } catch (err) {
+        next(err);
+    }
 })
 app.get("/file-info", async (req, res, next) => {
     try {
@@ -134,8 +146,14 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
         if (!file) {
             return next(new appError("No file uploaded", 400));
         }
-        if (!country) {
-            return next(new appError("Country required", 400));
+        if (!country || !ALLOWED_COUNTRIES.has(country)) {
+            return next(new appError("invalid country", 400));
+        }
+
+        // strip any path components from filename to prevent path traversal
+        const safeName = path.basename(file.originalname);
+        if (!safeName || safeName.startsWith(".") || !safeName.toLowerCase().endsWith(".pdf")) {
+            return next(new appError("invalid filename", 400));
         }
 
         // 🔥 Generate SHA256 hash
@@ -169,13 +187,13 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
 
-        const filePath = path.join(uploadDir, file.originalname);
+        const filePath = path.join(uploadDir, safeName);
 
         fs.writeFileSync(filePath, file.buffer);
 
         // 🔥 Save in DB
         const newFile = await FileModel.create({
-            filename: file.originalname,
+            filename: safeName,
             country,
             filePath,
             hash,
@@ -188,8 +206,9 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
         // SPAWN PYTHON PROCESS
 
 
-        const pythonProcess = spawn("python", [
-            "-u",//this print print in python code
+        // override with PYTHON_BIN env var (e.g. "python" on Windows, "python3" on macOS)
+        const pythonProcess = spawn(process.env.PYTHON_BIN || "python3", [
+            "-u", // unbuffered stdout so Python print()s stream live
             path.join(
                 __dirname,
                 "..",

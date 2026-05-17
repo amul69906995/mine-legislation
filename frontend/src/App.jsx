@@ -1,8 +1,18 @@
-import React from 'react';
-import ChatApp from './components/ChatApp';
-import './components/styles.css'
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import "./components/styles.css";
+
 function App() {
-  return <ChatApp />;
+  return (
+    <div className="app-layout">
+      <Sidebar />
+
+      <div className="main-content">
+        <Outlet />
+      </div>
+    </div>
+  );
 }
 
 export default App;

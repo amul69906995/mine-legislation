@@ -1,0 +1,37 @@
+.rag-source-container {
+  padding: 24px 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.rag-source-container h1 {
+  margin-bottom: 24px;
+  color: #1a237e;
+}
+
+.source-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.source-card h3 {
+  margin: 0 0 14px 0;
+  color: #111827;
+  font-size: 16px;
+}
+
+.source-text {
+  background: #f9fafb;
+  padding: 14px;
+  border-radius: 8px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 350px;
+  overflow-y: auto;
+}

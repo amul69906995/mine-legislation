@@ -12,6 +12,7 @@ const FileInfoList = () => {
                 const url = `${import.meta.env.VITE_BACKEND_URL}/file-info`;
                 const res = await fetch(url);
                 const data = await res.json();
+                console.log("getting all files...", data)
                 setFiles(data.files || []);
                 setLoading(false);
             } catch (error) {
@@ -47,22 +48,35 @@ const FileInfoList = () => {
                     {files.map((file, index) => {
                         const sizeInMB = (file.fileSize / (1024 * 1024)).toFixed(2);
 
-                        const formattedDate = new Date(file.createdAt)
-                            .toLocaleString("en-IN", {
+                        const formattedDate = new Date(file.createdAt).toLocaleString(
+                            "en-IN",
+                            {
                                 day: "2-digit",
                                 month: "short",
                                 year: "numeric",
                                 hour: "2-digit",
                                 minute: "2-digit",
-                            });
+                            }
+                        );
 
                         return (
-                            <tr key={file._id}>
+                            <tr
+                                key={file._id}
+                                className={file.cloudinaryUrl ? "clickable-row" : ""}
+                                onClick={() => {
+                                    if (file.cloudinaryUrl) {
+                                        window.open(file.cloudinaryUrl, "_blank");
+                                    }
+                                }}
+                            >
                                 <td className="col-number">
                                     {index + 1}
                                 </td>
 
-                                <td className="truncate col-filename" title={file.filename}>
+                                <td
+                                    className="truncate col-filename"
+                                    title={file.filename}
+                                >
                                     {file.filename}
                                 </td>
 
@@ -76,11 +90,16 @@ const FileInfoList = () => {
                                     </span>
                                 </td>
 
-                                <td className="truncate col-hash" title={file.hash}>
+                                <td
+                                    className="truncate col-hash"
+                                    title={file.hash}
+                                >
                                     {file.hash}
                                 </td>
 
-                                <td className="col-size">{sizeInMB}</td>
+                                <td className="col-size">
+                                    {sizeInMB}
+                                </td>
 
                                 <td className="col-date">
                                     {formattedDate}

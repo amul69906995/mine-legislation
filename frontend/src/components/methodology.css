@@ -1,9 +1,11 @@
 .methodology-container {
   padding: 24px 32px;
   max-width: 900px;
-  margin: auto;
+  margin: 0 auto;
+  min-height: 100%;
   font-family: Arial, Helvetica, sans-serif;
   color: #222;
+  box-sizing: border-box;
 }
 
 .methodology-container h1 {
@@ -41,9 +43,12 @@
   padding: 12px;
   margin-top: 10px;
   overflow-x: auto;
+  border-radius: 4px;
 }
 
 .code-box pre {
   margin: 0;
   font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }

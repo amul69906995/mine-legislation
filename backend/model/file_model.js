@@ -40,7 +40,18 @@ const fileSchema = new mongoose.Schema(
         fileSize: {
             type: Number,  
             required: true,
-        }
+        },
+        //cloudinary url
+        cloudinaryUrl: {
+            type: String,
+            default: null,
+        },
+
+        // Needed for delete/update operations
+        cloudinaryPublicId: {
+            type: String,
+            default: null,
+        },
     },
     {
         timestamps: true,

@@ -65,7 +65,7 @@ app.post('/chat', async (req, res, next) => {
                     topK: 5,
                     inputs: { text: query },
                 },
-                fields: ["chunk_text", "section_title", "file_name", "jurisdiction_level", "mineral_scope"],
+                fields: ["chunk_text", "file_name", "country","mongoIdForFileName"],
             });
             console.log("this is response from pinecone", response)
             //23.6%, 38.2%, 50%, 61.8%, 78.6%
@@ -117,7 +117,7 @@ app.post('/chat', async (req, res, next) => {
                     query
                 }),
             });
-
+            console.log(response)
             const { answer } = await response.json();
             console.log(answer);
 
@@ -131,6 +131,7 @@ app.post('/chat', async (req, res, next) => {
             return next(new appError(`unknown model: ${model}`, 400));
         }
     } catch (err) {
+        console.log("error from model", err)
         next(err);
     }
 })
@@ -260,11 +261,11 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
                         {
                             resource_type: "raw", // IMPORTANT for pdf
                             folder: `mine-legislation/${country}`,
-                            public_id:uniqueFileName,
+                            public_id: uniqueFileName,
                             overwrite: true,
                         }
                     );
-                    console.log("Cloudinary upload success:", cloudinaryResponse.secure_url,uniqueFileName);
+                    console.log("Cloudinary upload success:", cloudinaryResponse.secure_url, uniqueFileName);
                     await FileModel.findByIdAndUpdate(
                         newFile._id,
                         {

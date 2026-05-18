@@ -12,6 +12,7 @@ export const ChatProvider = ({ children }) => {
   const [selectedCountry, setSelectedCountry] = useState("india");
   const [selectedModel, setSelectedModel] = useState("rag");
   const [ragSources, setRagSources] = useState([]);
+  const [chatError, setChatError] = useState("");
 
   const handleSend = async (text) => {
     if (!text.trim()) return;
@@ -37,6 +38,12 @@ export const ChatProvider = ({ children }) => {
 
     } catch (error) {
       console.error(error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong";
+
+      setChatError(errorMessage);
     } finally {
       setReplyWait(false);
     }
@@ -50,6 +57,7 @@ export const ChatProvider = ({ children }) => {
         selectedCountry,
         selectedModel,
         ragSources,
+        chatError,
         setSelectedCountry,
         setSelectedModel,
         handleSend,

@@ -1,9 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { useChat } from "../context/ChatContext";
 import MessageForm from "./MessageForm";
-import './chatsection.css'
+import "./chatsection.css";
+
 function ChatSection() {
-  const { messages, replyWait, handleSend } = useChat();
+  const {
+    messages,
+    replyWait,
+    handleSend,
+    chatError,
+  } = useChat();
 
   const messagesEndRef = useRef(null);
 
@@ -23,8 +29,15 @@ function ChatSection() {
             </div>
           </div>
         ))}
+
         <div ref={messagesEndRef} />
       </div>
+
+      {chatError && (
+        <div className="chat-error">
+          {chatError}
+        </div>
+      )}
 
       <MessageForm
         onSend={handleSend}

@@ -65,7 +65,7 @@ app.post('/chat', async (req, res, next) => {
                     topK: 5,
                     inputs: { text: query },
                 },
-                fields: ["chunk_text", "file_name", "country","mongoIdForFileName"],
+                fields: ["chunk_text", "file_name", "country", "mongoIdForFileName"],
             });
             console.log("this is response from pinecone", response)
             //23.6%, 38.2%, 50%, 61.8%, 78.6%
@@ -247,55 +247,53 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
             );
         });
         pythonProcess.on("close", async (code) => {
+            console.log(`Python exited with code ${code}`);
 
-            console.log(
-                `Python exited with code ${code}`
-            );
+            if (code !== 0) {
+                deleteLocalFile(filePath);
+
+                await FileModel.findByIdAndUpdate(newFile._id, {
+                    status: "failed",
+                    errorMessage: "Pipeline processing failed"
+                });
+
+                return;
+            }
+
+            // ✅ Python succeeded → now handle upload separately
             try {
+                const uniqueFileName = `${newFile._id}.pdf`;
 
-                if (code === 0) {
-                    //upload to cloudinary
-                    const uniqueFileName = `${newFile._id}.pdf`;
-                    const cloudinaryResponse = await cloudinary.uploader.upload(
-                        filePath,
-                        {
-                            resource_type: "raw", // IMPORTANT for pdf
-                            folder: `mine-legislation/${country}`,
-                            public_id: uniqueFileName,
-                            overwrite: true,
-                        }
-                    );
-                    console.log("Cloudinary upload success:", cloudinaryResponse.secure_url, uniqueFileName);
-                    await FileModel.findByIdAndUpdate(
-                        newFile._id,
-                        {
-                            status: "completed",
-                            processedAt: new Date(),
-                            cloudinaryUrl: cloudinaryResponse.secure_url,
-                            cloudinaryPublicId: cloudinaryResponse.public_id,
-                        }
-                    );
-                    deleteLocalFile(filePath)
+                const cloudinaryResponse = await cloudinary.uploader.upload(
+                    filePath,
+                    {
+                        resource_type: "raw",
+                        folder: `mine-legislation/${country}`,
+                        public_id: uniqueFileName,
+                        overwrite: true,
+                    }
+                );
 
-                } else {
-                    deleteLocalFile(filePath)
+                console.log("Cloudinary upload success:", cloudinaryResponse.secure_url);
 
-                    await FileModel.findByIdAndUpdate(
-                        newFile._id,
-                        {
-                            status: "failed",
-                            errorMessage:
-                                "Pipeline processing failed"
-                        }
-                    );
-                }
+                await FileModel.findByIdAndUpdate(newFile._id, {
+                    status: "completed",
+                    processedAt: new Date(),
+                    cloudinaryUrl: cloudinaryResponse.secure_url,
+                    cloudinaryPublicId: cloudinaryResponse.public_id,
+                });
 
             } catch (err) {
+                console.error("Cloudinary upload failed:", err);
 
-                console.error(
-                    "MongoDB update failed:",
-                    err
-                );
+                // ✅ IMPORTANT: mark as failed due to upload
+                await FileModel.findByIdAndUpdate(newFile._id, {
+                    status: "completed",
+                    errorMessage: "Cloudinary upload failed"
+                });
+            } finally {
+                // ✅ Always clean up
+                deleteLocalFile(filePath);
             }
         });
         return res.json({ success: true, message: "File uploaded successfully. Processing started.", fileId: newFile._id });

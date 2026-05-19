@@ -103,3 +103,56 @@
   background: #9ca3af;
   cursor: not-allowed;
 }
+
+//added 
+/* ── Speak button ─────────────────────────────────────── */
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 3px 6px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  vertical-align: middle;
+}
+
+.speak-btn:hover {
+  color: #333;
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.speak-btn--active {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+/* ── Animated sound wave bars ─────────────────────────── */
+.speak-icon--playing {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.speak-icon--playing span {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: sound-wave 0.8s ease-in-out infinite alternate;
+}
+
+.speak-icon--playing span:nth-child(1) { height: 4px;  animation-delay: 0s;    }
+.speak-icon--playing span:nth-child(2) { height: 10px; animation-delay: 0.15s; }
+.speak-icon--playing span:nth-child(3) { height: 7px;  animation-delay: 0.3s;  }
+.speak-icon--playing span:nth-child(4) { height: 4px;  animation-delay: 0.45s; }
+
+@keyframes sound-wave {
+  from { transform: scaleY(0.4); opacity: 0.6; }
+  to   { transform: scaleY(1.2); opacity: 1;   }
+}

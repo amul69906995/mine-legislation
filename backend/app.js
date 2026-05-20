@@ -13,8 +13,8 @@ const appError = require('./error/appError')
 const FileModel = require('./model/file_model')
 const { spawn } = require("child_process");
 const cloudinary = require("cloudinary").v2;
-const { deleteLocalFile } = require('./helper')
-
+const { deleteLocalFile, getOrCreateChat, saveTurn } = require('./helper')
+const Chat = require('./model/chat_model')
 
 //db connections
 connectToDb()
@@ -49,12 +49,62 @@ const ALLOWED_COUNTRIES = new Set([
 app.get('/', (req, res) => {
     res.send("good to go!!")
 })
+// GET latest 5 chat sessions with messages
+app.get("/chats/latest", async (req, res, next) => {
+    try {
+        console.log("invoking/chats/latest")
+        const chats = await Chat.find({})
+            .sort({ updatedAt: -1 }) // latest updated sessions first
+            .select({
+                guestSessionId: 1,
+            })
+            .lean();
+        console.log(chats)
+        return res.json({
+            success: true,
+            count: chats.length,
+            chats,
+        });
+    } catch (error) {
+        console.error("Error fetching latest chats:", error);
+        next(error)
+    }
+});
+//get a chat
+app.get("/chat/:guestSessionId", async (req, res, next) => {
+  try {
+    const { guestSessionId } = req.params;
+
+    const chat = await Chat.findOne({ guestSessionId }).lean();
+
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      chat,
+    });
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    next(error);
+  }
+});
+
 app.post('/chat', async (req, res, next) => {
     try {
-        const { country, query, model } = req.body;
-        console.log(country, query, model)
+        const { country, query, model, guestSessionId } = req.body;
+        console.log("chat request →", { country, query, model, guestSessionId });
+
         if (!query) return next(new appError("query required", 400));
         if (!model) return next(new appError("model required", 400));
+        if (!guestSessionId) return next(new appError("guestSessionId required", 400));
+        // ── Get or create chat document ──────────────────────────────────────
+        const chat = await getOrCreateChat(guestSessionId, country, model);
+
         if (model === "rag") {
             if (!country || !ALLOWED_COUNTRIES.has(country)) {
                 return next(new appError("invalid country", 400));
@@ -76,8 +126,17 @@ app.post('/chat', async (req, res, next) => {
             const validHits = hits.filter(h => h._score >= MIN_CHUNK_SCORE);
 
             if (validHits.length === 0) {
+                const noMatchText = "Your query does not relate to mining legislation.";
+                const saved = await saveTurn(chat, {
+                    query,
+                    answer: noMatchText,
+                    model,
+                    country,
+                    ragSources: [],
+                });
                 return res.json({
-                    message: "Your query does not relate to mining legislation.",
+                    message: saved.answer,
+                    messageId: saved._id,
                     rag_source: [],
                 });
             }
@@ -98,13 +157,20 @@ app.post('/chat', async (req, res, next) => {
             const llmResponse = await getLlmResponse(query, selectedHits);
             //console.log(llmResponse)
             // const llmResponse = `dummy llm response`;
+            const saved = await saveTurn(chat, {
+                query,
+                answer: llmResponse,
+                model,
+                country,
+                ragSources: selectedHits,
+                confidence: { topScore, avgScore },
+            });
+
             return res.json({
-                message: llmResponse,
+                message: saved.answer,
+                messageId: saved._id,
                 rag_source: selectedHits,
-                confidence: {
-                    topScore,
-                    avgScore,
-                },
+                confidence: { topScore, avgScore },
             });
         }
         else if (model === "ragadv") {
@@ -119,9 +185,15 @@ app.post('/chat', async (req, res, next) => {
             });
             console.log(response)
             const { answer } = await response.json();
-            console.log(answer);
+            console.log("ragadv answer →", answer);
 
-            res.json({ message: answer })
+            const saved = await saveTurn(chat, { query, answer, model, country });
+
+            return res.json({
+                message: saved.answer,
+                messageId: saved._id,
+            });
+
         }
         else if (model === "trained") {
             console.log("here we will invoke trained model with user query and country")
@@ -131,10 +203,63 @@ app.post('/chat', async (req, res, next) => {
             return next(new appError(`unknown model: ${model}`, 400));
         }
     } catch (err) {
-        console.log("error from model", err)
+        console.error("error in /chat →", err.message);
+
+        // Best-effort: try to log the error against this turn in the DB
+        try {
+            const { query, model, country, guestSessionId } = req.body;
+            if (guestSessionId && query && model && country) {
+                const chat = await Chat.findOne({ guestSessionId });
+                if (chat) {
+                    await saveTurn(chat, {
+                        query,
+                        errorMessage: err.message || "Internal server error",
+                        model,
+                        country,
+                    });
+                }
+            }
+        } catch (saveErr) {
+            console.error("failed to save error turn →", saveErr);
+        }
+
         next(err);
     }
 })
+app.post("/feedback", async (req, res, next) => {
+    try {
+        const { messageId, feedback } = req.body;
+
+        if (!messageId) return next(new appError("messageId required", 400));
+        if (!feedback) return next(new appError("feedback required", 400));
+        if (!["like", "unlike"].includes(feedback)) {
+            return next(new appError("feedback must be 'like' or 'unlike'", 400));
+        }
+
+        // Update just the matching subdocument using positional operator
+        const chat = await Chat.findOneAndUpdate(
+            { "messages._id": messageId },
+            { $set: { "messages.$.feedback": feedback } },
+            { new: true }
+        );
+
+        if (!chat) {
+            return next(new appError("message not found", 404));
+        }
+
+        const updatedMessage = chat.messages.id(messageId);
+        return res.json({
+            success: true,
+            messageId: updatedMessage._id,
+            feedback: updatedMessage.feedback,
+        });
+
+    } catch (err) {
+        console.error("error in /feedback →", err);
+        next(err);
+    }
+});
+
 app.get("/file-info", async (req, res, next) => {
     try {
         const files = await FileModel.find()

@@ -56,6 +56,10 @@ def retrieve(state: State):
         namespace="india",
         top_k=3,
         inputs={"text": query},
+        # query={
+        #     "top_k": 3,
+        #     "inputs": {"text": query}
+        # },
         rerank={
             "model": "bge-reranker-v2-m3",
             "top_n": 3,

@@ -1,7 +1,6 @@
 /* =========================
    DESKTOP SIDEBAR
 ========================= */
-
 .sidebar {
   width: 25%;
   min-width: 260px;
@@ -13,7 +12,7 @@
   padding: 20px;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  /* ← merged the duplicate rule into here */
 }
 
 .sidebar h2 {
@@ -77,9 +76,8 @@
 /* =========================
    MOBILE NAVBAR
 ========================= */
-
 .mobile-navbar {
-  display: none;
+  display: none;           /* hidden on desktop */
 }
 
 .mobile-topbar {
@@ -108,24 +106,22 @@
 .mobile-menu {
   background-color: #1e1e2f;
   padding: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
-
 @media (max-width: 925px) {
   .desktop-sidebar {
-    display: none;
+    display: none;         /* hide full sidebar */
   }
 
   .mobile-navbar {
-    display: block;
+    display: block;        /* show topbar + hamburger */
     width: 100%;
-  }
-
-  .sidebar-btn {
-    width: 100%;
+    flex-shrink: 0;        /* never compress vertically */
   }
 }

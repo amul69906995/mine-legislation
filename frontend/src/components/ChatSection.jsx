@@ -1,58 +1,9 @@
-// import React, { useEffect, useRef } from "react";
-// import { useChat } from "../context/ChatContext";
-// import MessageForm from "./MessageForm";
-// import "./chatsection.css";
-
-// function ChatSection() {
-//   const {
-//     messages,
-//     replyWait,
-//     handleSend,
-//     chatError,
-//   } = useChat();
-
-//   const messagesEndRef = useRef(null);
-
-//   useEffect(() => {
-//     messagesEndRef.current?.scrollIntoView({
-//       behavior: "smooth",
-//     });
-//   }, [messages]);
-
-//   return (
-//     <div className="chat-section">
-//       <div className="messages">
-//         {messages.map((msg, idx) => (
-//           <div key={idx} className={`message ${msg.sender}`}>
-//             <div className="bubble">
-//               {msg.text}
-//             </div>
-//           </div>
-//         ))}
-
-//         <div ref={messagesEndRef} />
-//       </div>
-
-//       {chatError && (
-//         <div className="chat-error">
-//           {chatError}
-//         </div>
-//       )}
-
-//       <MessageForm
-//         onSend={handleSend}
-//         replyWait={replyWait}
-//       />
-//     </div>
-//   );
-// }
-
-// export default ChatSection;
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { useChat } from "../context/ChatContext";
 import MessageForm from "./MessageForm";
 import "./chatsection.css";
-
+import { FeedbackButtons } from "./FeedbackButtons ";
 // ─── TTS hook ────────────────────────────────────────────────────────────────
 
 function useSpeech() {
@@ -78,9 +29,10 @@ function useSpeech() {
 
     // Pick a natural-sounding voice if available
     const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(
-      (v) => v.lang.startsWith("en") && v.localService
-    ) || voices.find((v) => v.lang.startsWith("en")) || voices[0];
+    const preferred =
+      voices.find((v) => v.lang.startsWith("en") && v.localService) ||
+      voices.find((v) => v.lang.startsWith("en")) ||
+      voices[0];
     if (preferred) utterance.voice = preferred;
 
     utterance.onstart = () => {
@@ -141,35 +93,90 @@ function SpeakButton({ text, idx, speak, speaking, activeIdx }) {
 // ─── Chat section ─────────────────────────────────────────────────────────────
 
 function ChatSection() {
-  const { messages, replyWait, handleSend, chatError } = useChat();
+  const { chatId } = useParams();
+  const {
+    setGuestSessionId,
+    messages,
+    replyWait,
+    chatError,
+    handleSend,
+    loadChat,
+
+  } = useChat();
   const { speak, speaking, activeIdx } = useSpeech();
   const messagesEndRef = useRef(null);
 
+  // Set session ID from URL param
+  useEffect(() => {
+    if (chatId) {
+      loadChat(chatId);
+      setGuestSessionId(chatId);
+      localStorage.setItem("guestSessionId", chatId);
+    }
+  }, [chatId]);
+
+  // Auto-scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-console.log("messages in chat section",messages)
+
+  console.log("messages in chat section", messages);
+
   return (
     <div className="chat-section">
       <div className="messages">
         {messages.map((msg, idx) => (
           <div key={idx} className={`message ${msg.sender}`}>
-            <div className="bubble">
-              {msg.text}
+            <div
+              className="bubble"
+              style={
+                msg.errorMessage
+                  ? {
+                    color: "#dc3545",
+                    opacity: 0.9,
+                    cursor: "not-allowed",
+                  }
+                  : {}
+              }
+            >
+              {msg.errorMessage || msg.text}
 
-              {/* Read aloud button — only on assistant messages */}
-              {msg.sender === "bot" && (
-                <SpeakButton
-                  text={msg.text}
-                  idx={idx}
-                  speak={speak}
-                  speaking={speaking}
-                  activeIdx={activeIdx}
-                />
+              {msg.sender === "bot" && !msg.errorMessage && (
+                <div className="bot-actions">
+                  <SpeakButton
+                    text={msg.text}
+                    idx={idx}
+                    speak={speak}
+                    speaking={speaking}
+                    activeIdx={activeIdx}
+                  />
+
+                  {msg.messageId && (
+                    <FeedbackButtons
+                      messageId={msg.messageId}
+                      onFeedbackChange={(type) =>
+                        console.log("Feedback submitted:", type, msg.messageId)
+                      }
+                    />
+                  )}
+                </div>
               )}
             </div>
           </div>
         ))}
+
+        {replyWait && (
+          <div className="message bot">
+            <div className="bubble thinking-bubble">
+              <div className="thinking-loader">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span className="thinking-text">Thinking</span>
+            </div>
+          </div>
+        )}
 
         <div ref={messagesEndRef} />
       </div>
